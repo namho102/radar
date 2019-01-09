@@ -1,1 +1,24 @@
-const URL = "https://www.whoscored.com/StatisticsFeed/1/GetPlayerStatistics?category=shots&subcategory=zones&statsAccumulationType=1&isCurrent=true&playerId=&teamIds=&matchId=&stageId=&tournamentOptions=2,3,4,5,22&sortBy=Rating&sortAscending=&age=&ageComparisonType=0&appearances=9&appearancesComparisonType=2&field=&nationality=&positionOptions=%27FW%27,%27AML%27,%27AMC%27,%27AMR%27,%27ML%27,%27MC%27,%27MR%27,%27DMC%27,%27DL%27,%27DC%27,%27DR%27,%27GK%27,%27Sub%27&timeOfTheGameEnd=5&timeOfTheGameStart=0&isMinApp=&page=1&includeZeroValues=&numberOfPlayersToPick=10"
+const api = require('./api');
+const axios = require('axios');
+
+const {
+    MIDFIDER_URL,
+    apiBuilder
+} = api;
+
+const url = apiBuilder({
+    category: "tackles",
+    sortBy: "tackleWonTotal",
+    age: 28,
+    appearances: 9,
+    positionOptions: "%27AML%27,%27AMC%27,%27AMR%27,%27ML%27,%27MC%27,%27MR%27,%27DMC%27",
+    page: 2
+})
+
+console.log(url);
+
+axios.get(MIDFIDER_URL).then((result) => {
+    console.log(result.data);
+}).catch((err) => {
+
+});
