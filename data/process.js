@@ -21,7 +21,7 @@ function getFileList(category) {
 
 function readCategory(category) {
     return new Promise(function(resolve, reject) {
-        Promise.all(getFileList("dribbles").map(readJSON)).then(function(value) {
+        Promise.all(getFileList(category).map(readJSON)).then(function(value) {
             resolve([].concat.apply([], value));
         });
     })
