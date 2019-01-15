@@ -68,20 +68,33 @@ async function process() {
     const playerStatsList = [];
     for(let playerName of playerNames) {
         const playerStat = playerStats[playerName];
-        playerStatsList.push({
-            playerName,
-            dribbles: playerStat.dribbleWon || 0,
-            interceptions: playerStat.interceptionAll || 0,
-            tackles: playerStat.tackleWonTotal || 0,
-            keyPasses: playerStat.keyPassesTotal || 0
+        // playerStatsList.push({
+        //     playerName,
+        //     dribbles: playerStat.dribbleWon || 0,
+        //     interceptions: playerStat.interceptionAll || 0,
+        //     tackles: playerStat.tackleWonTotal || 0,
+        //     keyPasses: playerStat.keyPassesTotal || 0
 
-        })
+        // })
+        if(playerStat.dribbleWon &&
+            playerStat.interceptionAll &&
+            playerStat.tackleWonTotal &&
+            playerStat.keyPassesTotal) {
+
+            playerStatsList.push({
+                playerName,
+                dribbles: playerStat.dribbleWon,
+                interceptions: playerStat.interceptionAll,
+                tackles: playerStat.tackleWonTotal,
+                keyPasses: playerStat.keyPassesTotal
+            })
+        }
     }
     // console.log(playerStatsList);
 
     const json = JSON.stringify({ playerStatsList });
 
-    fs.writeFileSync('playerStatsList.json', json, 'utf8');
+    fs.writeFileSync('playerStatsList_positive.json', json, 'utf8');
 }
 
 process();
