@@ -11,25 +11,77 @@ function readJSON(fileName) {
     })
 };
 
-function getFileList(category) {
+function readCategory(category) {
     const fileList = [];
     for (let i = 1; i <= 20; i++) {
         fileList.push(`${category}/data (${i}).json`);
     }
-    return fileList;
-}
-
-function readCategory(category) {
     return new Promise(function(resolve, reject) {
-        Promise.all(getFileList(category).map(readJSON)).then(function(value) {
+        Promise.all(fileList.map(readJSON)).then(function(value) {
             resolve([].concat.apply([], value));
         });
     })
 }
 
+function setPlayerStats(playerStats, categoryStat) {
+    for (let playerStat of categoryStat) {
+        if(!playerStats[playerStat.name]) {
+            playerStats[playerStat.name] = {}
+        }
+    }
+
+    for (let playerStat of categoryStat) {
+        const stat = playerStats[playerStat.name];
+        playerStats[playerStat.name] = {...stat, ...playerStat};
+    }
+}
+
 async function process() {
-    const dribbleStat = await readCategory("dribbles");
-    console.log(dribbleStat);
+    const dribbles = await readCategory("dribbles");
+    const interceptions = await readCategory("interceptions");
+    const keypasses = await readCategory("keypasses");
+    const tackles = await readCategory("tackles");
+
+    const playerNameSet = new Set();
+    for (let playerStat of dribbles) {
+        playerNameSet.add(playerStat.name)
+    }
+    for (let playerStat of interceptions) {
+        playerNameSet.add(playerStat.name)
+    }
+    for (let playerStat of keypasses) {
+        playerNameSet.add(playerStat.name)
+    }
+    for (let playerStat of tackles) {
+        playerNameSet.add(playerStat.name)
+    }
+
+    const playerNames = Array.from(playerNameSet);
+
+    const playerStats = {};
+
+    setPlayerStats(playerStats, dribbles);
+    setPlayerStats(playerStats, interceptions);
+    setPlayerStats(playerStats, keypasses);
+    setPlayerStats(playerStats, tackles);
+
+    const playerStatsList = [];
+    for(let playerName of playerNames) {
+        const playerStat = playerStats[playerName];
+        playerStatsList.push({
+            playerName,
+            dribbles: playerStat.dribbleWon || 0,
+            interceptions: playerStat.interceptionAll || 0,
+            tackles: playerStat.tackleWonTotal || 0,
+            keyPasses: playerStat.keyPassesTotal || 0
+
+        })
+    }
+    // console.log(playerStatsList);
+
+    const json = JSON.stringify({ playerStatsList });
+
+    fs.writeFileSync('playerStatsList.json', json, 'utf8');
 }
 
 process();
